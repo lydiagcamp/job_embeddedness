@@ -1,0 +1,15 @@
+project:
+  type: website
+  output-dir: docs
+
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
