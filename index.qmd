@@ -45,6 +45,8 @@ library(tidyverse)
 library(stargazer) 
 library(effectsize)
 library(MASS)
+library(marginaleffects)
+library(broom)
 ```
 
 ```{r}
@@ -101,7 +103,7 @@ data <- clean_negatives(data)
 
 # remove variables not in dataset
 data2 <- data |>
-  select(-SEXORNT) |>
+ #select(-SEXORNT) |>
   filter(!(is.na(SEX1) & is.na(SEX2) & is.na(SEX3) & is.na(SEX4) & is.na(SEX5)))
 # remove observations that have NAs for all five contacts
 
@@ -194,6 +196,10 @@ data3 |>
     n = n()
   )
 ```
+
+![](images/data.png)
+
+![](images/descriptives-01.png)
 
 ## Perceptions of Job Loss
 
@@ -326,3 +332,138 @@ descriptives <- data.frame(
 
 descriptives
 ```
+
+# Visualization
+
+```{r}
+# if half of your close friends are your co-workers
+
+# Prediction grid
+grid <- datagrid(
+  model = m2,
+  weighted_cowork = c(0, 0.5, 1)
+)
+
+pred <- predictions(
+  m2,
+  newdata = grid,
+  conf_level = 0.95
+)
+
+ggplot(pred, aes(x = weighted_cowork, y = estimate)) +
+  geom_errorbar(
+    aes(ymin = conf.low, ymax = conf.high),
+    width = 0.08,
+    linewidth = 1
+  ) +
+  geom_point(size = 3) +
+  scale_x_continuous(
+    breaks = c(0, 0.5, 1),
+    labels = c("0 (Low)", "0.5 (Medium)", "1 (High)")
+  ) +
+  scale_y_continuous(
+    limits = c(1, 5),
+    breaks = 1:4
+  ) +
+  labs(
+    x = "Coworker Embeddedness (Weighted)",
+    y = "Predicted Job Security",
+    title = "Predicted Job Security by Coworker Embeddedness",
+    subtitle = "Estimates from linear regression with 95% confidence intervals",
+    caption = "Predictions averaged over observed covariates"
+  ) +
+  theme_classic(base_size = 14)
+
+```
+
+```{r}
+coefs <- bind_rows(
+  tidy(m2, conf.int = TRUE) |>  mutate(model = "With Controls"),
+  tidy(m2_pure, conf.int = TRUE) |>  mutate(model = "Without Controls")
+) |> 
+  filter(term == "weighted_cowork") |> 
+  mutate(model = factor(model, levels = c("Without Controls", "With Controls")))
+
+p <- ggplot(coefs, aes(x = model, y = estimate, color = model)) +
+  geom_errorbar(
+    aes(ymin = conf.low, ymax = conf.high),
+    width = 0.18,      # CI "
+    linewidth = 1.2
+  ) +
+  geom_point(size = 4) +
+  geom_hline(yintercept = 0, linetype = "dotted", linewidth = 1) +
+  coord_flip() +
+  scale_color_manual(
+    values = c(
+      "Without Controls" = "black",
+      "With Controls"    = "blue"   
+    ),
+    guide = "none"
+  ) +
+  labs(x = NULL, y = "Estimated Coefficient (95% CI)") +
+  theme_classic(base_size = 18) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    axis.title.y = element_text(size = 17, margin = margin(r = 12)),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15),
+    axis.line = element_line(linewidth = 0.9),
+    axis.ticks = element_line(linewidth = 0.9)
+  )
+
+p
+# save
+ggsave("coef_weighted_cowork.png", plot = p,
+       width = 7, height = 4.5, units = "in", dpi = 300, bg = "white")
+
+```
+
+![](coef_weighted_cowork.png)
+
+```{r}
+coefs <- bind_rows(
+  tidy(m1, conf.int = TRUE) |>  mutate(model = "With Controls"),
+  tidy(m1_pure, conf.int = TRUE) |>  mutate(model = "Without Controls")
+) |> 
+  filter(term == "weighted_cowork") |> 
+  mutate(model = factor(model, levels = c("Without Controls", "With Controls")))
+
+p <- ggplot(coefs, aes(x = model, y = estimate, color = model)) +
+  geom_errorbar(
+    aes(ymin = conf.low, ymax = conf.high),
+    width = 0.18,      # CI "
+    linewidth = 1.2
+  ) +
+  geom_point(size = 4) +
+  geom_hline(yintercept = 0, linetype = "dotted", linewidth = 1) +
+  coord_flip() +
+  scale_color_manual(
+    values = c(
+      "Without Controls" = "black",
+      "With Controls"    = "blue"   
+    ),
+    guide = "none"
+  ) +
+  scale_y_continuous(
+  breaks = c(0.0, -0.3, -0.6, -0.9, -1.2),
+  limits = c(0.0, -1.2)
+) +
+  labs(x = NULL, y = "Estimated Coefficient (95% CI)") +
+  theme_classic(base_size = 18) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    axis.title.y = element_text(size = 17, margin = margin(r = 12)),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15),
+    axis.line = element_line(linewidth = 0.9),
+    axis.ticks = element_line(linewidth = 0.9)
+  )
+
+p
+# save
+ggsave("job_loss.png", plot = p,
+       width = 7, height = 4.5, units = "in", dpi = 300, bg = "white")
+
+```
+
+![](job_loss.png)
