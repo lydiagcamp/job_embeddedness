@@ -24,7 +24,6 @@ This repository contains the data and replication code for a paper examining the
 | `weighted_cowork` | Proportion of respondent's close contacts that are their coworkers (weighted by intensity of interaction) |
 | `female` | Gender indicator (1 = female) |
 | `age` | Age |
-| `I(age^2)` | Age squared |
 | `educ` | Years of education |
 | `marital` | Marital status: Married |
 | `CHILDS` | Number of children |
