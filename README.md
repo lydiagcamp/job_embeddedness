@@ -33,7 +33,7 @@ This repository contains the data and replication code for a paper examining the
 | `union` | Union membership status |
 | `region` | Region: South |
 | `work_govt` | Government employment indicator |
-| `hrs_wee)` | Hours worked per week |
+| `hrs_week` | Hours worked per week |
 | `migrant` | Migrant status |
 | `occ_major` | Occupation category (ISCO 1-digit level) |
 | `partyid` | Political party identification (0-7) |
