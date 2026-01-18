@@ -10,7 +10,7 @@ This repository contains the data and replication code for a paper examining the
   [`Read the paper here!`](https://lydiagcamp.github.io/when_strikes_meet_stocks/Final_Paper.pdf)
 
 - **Replication Code**  
-  [`https://lydiagcamp.github.io/job_embeddedness/`](https://lydiagcamp.github.io/job_embeddedness/)
+  [`https://lydiagcamp.github.io/occupational_embeddedness/`](https://lydiagcamp.github.io/occupational_embeddedness/)
 
 
 
