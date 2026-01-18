@@ -33,9 +33,9 @@ This repository contains the data and replication code for a paper examining the
 | `union` | Union membership status |
 | `region` | Region: South |
 | `work_govt` | Government employment indicator |
-| `log(hrs_week)` | Log of weekly work hours |
+| `hrs_wee)` | Hours worked per week |
 | `migrant` | Migrant status |
-| `factor(occ_major)` | Occupation category (ISCO 1-digit level) |
+| `occ_major` | Occupation category (ISCO 1-digit level) |
 | `partyid` | Political party identification (0-7) |
 | `sub_class` | Subjective class identification |
 
