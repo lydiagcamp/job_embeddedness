@@ -1,0 +1,328 @@
+---
+title: "Replication Code"
+subtitle: "'Job Embeddness and Precarious Work'"
+author: Lydia Camp
+date: last-modified
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-summary: "Show code"
+    code-copy: true
+    code-overflow: wrap
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+---
+
+# Import Data/Packages
+
+```{r}
+# Load Packages
+library(tidyverse)
+library(lmtest)
+library(sandwich)
+library(fixest)
+library(did)
+library(panelView)
+library(car)
+library(showtext)
+library(grid)
+library(data.table)
+library(FNN)
+library(stringr)
+library(plm)
+library(scales)
+library(modelsummary)
+library(devtools)
+library(foreign)
+library(sandwich)
+library(tidyverse)
+library(stargazer) 
+library(effectsize)
+library(MASS)
+```
+
+```{r}
+# Function for cleaning the data (provided by GSS)
+ read.dct <- function(dct, labels.included = "yes") {
+      temp <- readLines(dct)
+      temp <- temp[grepl("_column", temp)]
+      switch(labels.included,
+             yes = {
+                 pattern <- "_column\\(([0-9]+)\\)\\s+([a-z0-9]+)\\s+(.*)\\s+%([0-9]+)[a-z]\\s+(.*)"
+                 classes <- c("numeric", "character", "character", "numeric", "character")
+                 N <- 5
+                 NAMES <- c("StartPos", "Str", "ColName", "ColWidth", "ColLabel")
+             },
+             no = {
+                 pattern <- "_column\\(([0-9]+)\\)\\s+([a-z0-9]+)\\s+(.*)\\s+%([0-9]+).*"
+                 classes <- c("numeric", "character", "character", "numeric")
+                 N <- 4
+                 NAMES <- c("StartPos", "Str", "ColName", "ColWidth")
+             })
+      temp_metadata <- setNames(lapply(1:N, function(x) {
+          out <- gsub(pattern, paste("\\", x, sep = ""), temp)
+          out <- gsub("^\\s+|\\s+$", "", out)
+          out <- gsub('\"', "", out, fixed = TRUE)
+          class(out) <- classes[x] ; out }), NAMES)
+      temp_metadata[["ColName"]] <- make.names(gsub("\\s", "", temp_metadata[["ColName"]]))
+      temp_metadata
+  }
+
+  read.dat <- function(dat, metadata_var, labels.included = "yes") {
+      read.table(dat, col.names = metadata_var[["ColName"]])
+  }
+
+# Load the data
+GSS_metadata <- read.dct("~/Desktop/MA UC3M/TFM/OE/Juan Paper/data/GSS.dct")
+GSS_ascii <- read.dat("~/Desktop/MA UC3M/TFM/OE/Juan Paper/data/GSS.dat", GSS_metadata)
+attr(GSS_ascii, "col.label") <- GSS_metadata[["ColLabel"]]
+GSS <- GSS_ascii
+```
+
+# Clean Data
+
+```{r}
+# set years
+data <- GSS |> 
+  filter(YEAR == 2004) # data available only in 2004
+
+# Make missing values NA (function for cleaning data)
+clean_negatives <- function(x) {
+  x[x < 0] <- NA
+  return(x)
+}
+data <- clean_negatives(data)
+
+# remove variables not in dataset
+data2 <- data |>
+  select(-SEXORNT) |>
+  filter(!(is.na(SEX1) & is.na(SEX2) & is.na(SEX3) & is.na(SEX4) & is.na(SEX5)))
+# remove observations that have NAs for all five contacts
+
+
+# Clean Variables 
+data3 <- data2 %>%
+  mutate(
+    female = case_when(SEX == 2 ~ 1, SEX == 1 ~ 0),
+    black = case_when(RACE == 2 ~ 1, RACE == 1 ~ 0, RACE == 3 ~ 0),
+    latinx = case_when(HISPANIC == 2 ~ 1, HISPANIC == 3 ~ 1, HISPANIC == 4 ~ 1, HISPANIC == 5 ~ 1, HISPANIC == 1 ~ 0),
+    migrant = case_when(BORN == 2 ~ 1, BORN == 1 ~ 0),
+    income = RINCOME,
+    hsincome = INCOME,
+    age = AGE,
+    educ = EDUC,
+    marital = MARITAL,
+    region = case_when(REGION == 3 ~ 1, TRUE~0),
+    partyid = 7 - PARTYID,
+    work = case_when(WRKSTAT == 1 ~ 1, WRKSTAT==2~1, WRKSTAT==3~1, TRUE~0),
+    rural = case_when(SRCBELT == 6 ~ 1, TRUE~0),
+    union = case_when(UNION_ == 1 ~1,
+                      TRUE~0),
+    joblike_lose = 5 - JOBLOSE,
+    hrs_week = HRS1,
+    hrs_week2 = HRS2,
+    job_cwrk = JOBCOWRK,
+    job_find = 4 - JOBFIND,
+    born = BORN,
+    talkto1 = 5 - TALKTO1,
+     talkto2 = 5 - TALKTO2,
+     talkto3 = 5 - TALKTO2,
+     talkto4 = 5 - TALKTO2,
+     talkto5 = 5 - TALKTO2,
+    work_govt = case_when(WRKGOVT == 1 ~ 1,
+                          WRKGOVT == 2 ~ 0),
+    cowork1 = case_when(COWORK1 == 1 ~1,
+                        COWORK1 == 2 ~ 0),
+    cowork2 = case_when(COWORK2 == 1 ~1,
+                        COWORK2 == 2 ~ 0),
+    cowork3 = case_when(COWORK3 == 1 ~1,
+                        COWORK3 == 2 ~ 0),
+    cowork4 = case_when(COWORK4 == 1 ~1,
+                        COWORK4 == 2 ~ 0),
+    cowork5 = case_when(COWORK5 == 1 ~1,
+                        COWORK5 == 2 ~ 0),
+    help_find_job = 7 - HELPJOB,
+    childs = CHILDS,
+    sat_job = 5 - SATJOB,
+    numgiven = NUMGIVEN, # total number of contacts
+    prop_cowork = rowSums(across(c(cowork1, cowork2, cowork3, cowork4, cowork5)), 
+                           na.rm = TRUE) / numgiven,
+   occ_major = as.numeric(substr(as.character(OCC10), 1, 1)), # 1-9 occ code
+   sub_class = case_when(
+      CLASS_ == 1 ~ "Lower class",
+      CLASS_ == 2 ~ "Working class",
+      CLASS_ == 3 ~ "Middle class",
+      CLASS_ == 4 ~ "Upper class",
+      TRUE ~ NA_character_
+    ),
+   job_sec = 5 - GDJOBSEC,
+    race = factor(
+      case_when(
+        HISPANIC != 1 ~ "Latinx",
+        RACE == 1 & HISPANIC == 1 ~ "White-NonLatinx",
+        RACE == 2 & HISPANIC == 1 ~ "Black-NonLatinx",
+        RACE == 3 & HISPANIC == 1 ~ "Other-NonLatinx"
+      ),
+      levels = c("White-NonLatinx", "Black-NonLatinx", "Latinx", "Other-NonLatinx")
+    )
+  )
+```
+
+# Descriptive Statistics
+
+```{r}
+# BY CLASS
+data3 |>
+  group_by(sub_class) |>
+  summarise(
+    avg_prop_cowork = 100*mean(weighted_cowork, na.rm = TRUE),
+    n = n()
+  )
+# more of a working and middle class pheonomenon (in terms of self-reported class identity)
+
+# BY 1-DIGIT OCC CODE
+data3 |>
+  group_by(occ_major) |>
+  summarise(
+    avg_prop_cowork = 100*mean(weighted_cowork, na.rm = TRUE),
+    n = n()
+  )
+```
+
+## Perceptions of Job Loss
+
+```{r}
+# BY CLASS
+data3 |>
+  group_by(sub_class) |>
+  summarise(
+    avg_prop_cowork = mean(joblike_lose, na.rm = TRUE),
+    n = n()
+  )
+# BY OCCUPATION
+data3 |>
+  group_by(occ_major) |>
+  summarise(
+    avg_prop_cowork = mean(joblike_lose, na.rm = TRUE),
+    n = n()
+  )
+```
+
+## Weight Networks by Degree of Contact
+
+```{r}
+# Weight networks by the intensity of contact
+data3 <- data3 |>
+  rowwise() |>
+  mutate(
+    weighted_cowork = if (!is.na(numgiven) && numgiven > 0) {
+
+      cw <- c(cowork1, cowork2, cowork3, cowork4, cowork5)[1:numgiven]
+      tk <- c(talkto1, talkto2, talkto3, talkto4, talkto5)[1:numgiven]
+
+      num <- sum(cw * tk, na.rm = TRUE)
+      den <- sum(tk, na.rm = TRUE)
+
+      if (den > 0) num / den else NA_real_
+
+    } else {
+      NA_real_
+    }
+  ) |>
+  ungroup()
+```
+
+# Run Regressions
+
+```{r}
+# likelihood of losing job
+m1 <- lm(joblike_lose ~ weighted_cowork + female + age + I(age^2) + educ + marital + CHILDS + hsincome + race + rural + union + region + work_govt + log(hrs_week) + migrant + factor(occ_major) + partyid + sub_class + sat_job, data = data3)
+
+# Extract exact estimation sample used by m1
+mf_m1 <- model.frame(m1)
+
+# Re-run pure model on same sample
+m1_pure <- lm(joblike_lose ~ weighted_cowork, data = mf_m1)
+
+
+# perceptions of job security
+m2 <- lm(job_sec ~ weighted_cowork + female + age + I(age^2) + marital + educ + hsincome + race + rural + union + region + work_govt + log(hrs_week) + migrant + CHILDS + factor(occ_major) + sub_class + partyid + sat_job, data = data3)
+
+# Extract exact estimation sample used by m2
+mf_m2 <- model.frame(m2)
+
+# Re-run pure model on same sample
+m2_pure <- lm(job_sec ~ weighted_cowork, data = mf_m2)
+```
+
+## Robustness Checks
+
+```{r}
+# Test Heteroskedasticity
+bptest(m2) # not heteroskedastic
+bptest(m1) # not heteroskedastic
+```
+
+## Final Table
+
+```{r}
+# define models
+models <- list(
+   "Job Loss (Pure)" = m1_pure,
+  "Job Loss (full)" = m1,
+   "Job Security (Pure)" = m2_pure,
+  "Job Security (Full)" = m2
+)
+
+# define variable names
+coef_map <- c(
+  "weighted_cowork" = "Weighted coworker share",
+  "female" = "Female",
+  "age" = "Age",
+  "I(age^2)" = "Age squared",
+  "educ" = "Education",
+  "marital" = "Married",
+  "CHILDS" = "Children",
+  "hsincome" = "Household income",
+  "race" = "Race",
+  "rural" = "Rural",
+  "union" = "Union member",
+  "work_govt" = "Government worker",
+  "hrs_week" = "Hours worked per week",
+  "born" = "US-born",
+  "partyid" = "Party ID"
+)
+
+# table
+modelsummary(
+  models,
+  vcov = vcovHC,
+  statistic = "std.error",
+  coef_rename = coef_map,
+  stars = TRUE,
+  gof_omit = "IC|Log|Adj|F"
+)
+```
+
+```{r}
+# Descriptive table
+# Extract data actually used in the model
+mf <- model.frame(m1)
+
+# Descriptives for numeric variables
+descriptives <- data.frame(
+  N    = sapply(mf, function(x) sum(!is.na(x))),
+  Mean = sapply(mf, function(x) if (is.numeric(x)) mean(x, na.rm = TRUE) else NA),
+  SD   = sapply(mf, function(x) if (is.numeric(x)) sd(x, na.rm = TRUE) else NA),
+  Min  = sapply(mf, function(x) if (is.numeric(x)) min(x, na.rm = TRUE) else NA),
+  Max  = sapply(mf, function(x) if (is.numeric(x)) max(x, na.rm = TRUE) else NA)
+)
+
+descriptives
+```

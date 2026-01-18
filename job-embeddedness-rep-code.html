@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lydia Camp">
+<meta name="dcterms.date" content="2026-01-18">
+
+<title>Replication Code</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="job-embeddedness-rep-code_files/libs/clipboard/clipboard.min.js"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/popper.min.js"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="job-embeddedness-rep-code_files/libs/quarto-html/anchor.min.js"></script>
+<link href="job-embeddedness-rep-code_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="job-embeddedness-rep-code_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="job-embeddedness-rep-code_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="job-embeddedness-rep-code_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="job-embeddedness-rep-code_files/libs/bootstrap/bootstrap-7e6083fab22102ff398964aedbb65fba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#import-datapackages" id="toc-import-datapackages" class="nav-link active" data-scroll-target="#import-datapackages">Import Data/Packages</a></li>
+  <li><a href="#clean-data" id="toc-clean-data" class="nav-link" data-scroll-target="#clean-data">Clean Data</a></li>
+  <li><a href="#descriptive-statistics" id="toc-descriptive-statistics" class="nav-link" data-scroll-target="#descriptive-statistics">Descriptive Statistics</a>
+  <ul class="collapse">
+  <li><a href="#perceptions-of-job-loss" id="toc-perceptions-of-job-loss" class="nav-link" data-scroll-target="#perceptions-of-job-loss">Perceptions of Job Loss</a></li>
+  <li><a href="#weight-networks-by-degree-of-contact" id="toc-weight-networks-by-degree-of-contact" class="nav-link" data-scroll-target="#weight-networks-by-degree-of-contact">Weight Networks by Degree of Contact</a></li>
+  </ul></li>
+  <li><a href="#run-regressions" id="toc-run-regressions" class="nav-link" data-scroll-target="#run-regressions">Run Regressions</a>
+  <ul class="collapse">
+  <li><a href="#robustness-checks" id="toc-robustness-checks" class="nav-link" data-scroll-target="#robustness-checks">Robustness Checks</a></li>
+  <li><a href="#final-table" id="toc-final-table" class="nav-link" data-scroll-target="#final-table">Final Table</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Replication Code</h1>
+<p class="subtitle lead">‘Job Embeddness and Precarious Work’</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lydia Camp </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 18, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="import-datapackages" class="level1">
+<h1>Import Data/Packages</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(did)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(panelView)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(showtext)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FNN)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plm)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer) </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for cleaning the data (provided by GSS)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> read.dct <span class="ot">&lt;-</span> <span class="cf">function</span>(dct, <span class="at">labels.included =</span> <span class="st">"yes"</span>) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>      temp <span class="ot">&lt;-</span> <span class="fu">readLines</span>(dct)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      temp <span class="ot">&lt;-</span> temp[<span class="fu">grepl</span>(<span class="st">"_column"</span>, temp)]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">switch</span>(labels.included,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">yes =</span> {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                 pattern <span class="ot">&lt;-</span> <span class="st">"_column</span><span class="sc">\\</span><span class="st">(([0-9]+)</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s+([a-z0-9]+)</span><span class="sc">\\</span><span class="st">s+(.*)</span><span class="sc">\\</span><span class="st">s+%([0-9]+)[a-z]</span><span class="sc">\\</span><span class="st">s+(.*)"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                 classes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"numeric"</span>, <span class="st">"character"</span>, <span class="st">"character"</span>, <span class="st">"numeric"</span>, <span class="st">"character"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                 N <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                 NAMES <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"StartPos"</span>, <span class="st">"Str"</span>, <span class="st">"ColName"</span>, <span class="st">"ColWidth"</span>, <span class="st">"ColLabel"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>             },</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">no =</span> {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                 pattern <span class="ot">&lt;-</span> <span class="st">"_column</span><span class="sc">\\</span><span class="st">(([0-9]+)</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s+([a-z0-9]+)</span><span class="sc">\\</span><span class="st">s+(.*)</span><span class="sc">\\</span><span class="st">s+%([0-9]+).*"</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                 classes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"numeric"</span>, <span class="st">"character"</span>, <span class="st">"character"</span>, <span class="st">"numeric"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                 N <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                 NAMES <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"StartPos"</span>, <span class="st">"Str"</span>, <span class="st">"ColName"</span>, <span class="st">"ColWidth"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>             })</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      temp_metadata <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>N, <span class="cf">function</span>(x) {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>          out <span class="ot">&lt;-</span> <span class="fu">gsub</span>(pattern, <span class="fu">paste</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">"</span>, x, <span class="at">sep =</span> <span class="st">""</span>), temp)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>          out <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">s+|</span><span class="sc">\\</span><span class="st">s+$"</span>, <span class="st">""</span>, out)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>          out <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">'</span><span class="sc">\"</span><span class="st">'</span>, <span class="st">""</span>, out, <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>          <span class="fu">class</span>(out) <span class="ot">&lt;-</span> classes[x] ; out }), NAMES)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      temp_metadata[[<span class="st">"ColName"</span>]] <span class="ot">&lt;-</span> <span class="fu">make.names</span>(<span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s"</span>, <span class="st">""</span>, temp_metadata[[<span class="st">"ColName"</span>]]))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      temp_metadata</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  read.dat <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, metadata_var, <span class="at">labels.included =</span> <span class="st">"yes"</span>) {</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">read.table</span>(dat, <span class="at">col.names =</span> metadata_var[[<span class="st">"ColName"</span>]])</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>GSS_metadata <span class="ot">&lt;-</span> <span class="fu">read.dct</span>(<span class="st">"~/Desktop/MA UC3M/TFM/OE/Juan Paper/data/GSS.dct"</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>GSS_ascii <span class="ot">&lt;-</span> <span class="fu">read.dat</span>(<span class="st">"~/Desktop/MA UC3M/TFM/OE/Juan Paper/data/GSS.dat"</span>, GSS_metadata)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(GSS_ascii, <span class="st">"col.label"</span>) <span class="ot">&lt;-</span> GSS_metadata[[<span class="st">"ColLabel"</span>]]</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>GSS <span class="ot">&lt;-</span> GSS_ascii</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="clean-data" class="level1">
+<h1>Clean Data</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set years</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> GSS <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">==</span> <span class="dv">2004</span>) <span class="co"># data available only in 2004</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Make missing values NA (function for cleaning data)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>clean_negatives <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  x[x <span class="sc">&lt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">clean_negatives</span>(data)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># remove variables not in dataset</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>SEXORNT) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(<span class="fu">is.na</span>(SEX1) <span class="sc">&amp;</span> <span class="fu">is.na</span>(SEX2) <span class="sc">&amp;</span> <span class="fu">is.na</span>(SEX3) <span class="sc">&amp;</span> <span class="fu">is.na</span>(SEX4) <span class="sc">&amp;</span> <span class="fu">is.na</span>(SEX5)))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># remove observations that have NAs for all five contacts</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean Variables </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">female =</span> <span class="fu">case_when</span>(SEX <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">1</span>, SEX <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">black =</span> <span class="fu">case_when</span>(RACE <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">1</span>, RACE <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">0</span>, RACE <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">latinx =</span> <span class="fu">case_when</span>(HISPANIC <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">1</span>, HISPANIC <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">1</span>, HISPANIC <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="dv">1</span>, HISPANIC <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="dv">1</span>, HISPANIC <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">migrant =</span> <span class="fu">case_when</span>(BORN <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">1</span>, BORN <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">income =</span> RINCOME,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">hsincome =</span> INCOME,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> AGE,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">educ =</span> EDUC,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">marital =</span> MARITAL,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">region =</span> <span class="fu">case_when</span>(REGION <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span><span class="sc">~</span><span class="dv">0</span>),</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">partyid =</span> <span class="dv">7</span> <span class="sc">-</span> PARTYID,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">work =</span> <span class="fu">case_when</span>(WRKSTAT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>, WRKSTAT<span class="sc">==</span><span class="dv">2</span><span class="sc">~</span><span class="dv">1</span>, WRKSTAT<span class="sc">==</span><span class="dv">3</span><span class="sc">~</span><span class="dv">1</span>, <span class="cn">TRUE</span><span class="sc">~</span><span class="dv">0</span>),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">rural =</span> <span class="fu">case_when</span>(SRCBELT <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span><span class="sc">~</span><span class="dv">0</span>),</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">union =</span> <span class="fu">case_when</span>(UNION_ <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                      <span class="cn">TRUE</span><span class="sc">~</span><span class="dv">0</span>),</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">joblike_lose =</span> <span class="dv">5</span> <span class="sc">-</span> JOBLOSE,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">hrs_week =</span> HRS1,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">hrs_week2 =</span> HRS2,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">job_cwrk =</span> JOBCOWRK,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">job_find =</span> <span class="dv">4</span> <span class="sc">-</span> JOBFIND,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">born =</span> BORN,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">talkto1 =</span> <span class="dv">5</span> <span class="sc">-</span> TALKTO1,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>     <span class="at">talkto2 =</span> <span class="dv">5</span> <span class="sc">-</span> TALKTO2,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>     <span class="at">talkto3 =</span> <span class="dv">5</span> <span class="sc">-</span> TALKTO2,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>     <span class="at">talkto4 =</span> <span class="dv">5</span> <span class="sc">-</span> TALKTO2,</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>     <span class="at">talkto5 =</span> <span class="dv">5</span> <span class="sc">-</span> TALKTO2,</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_govt =</span> <span class="fu">case_when</span>(WRKGOVT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>                          WRKGOVT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">cowork1 =</span> <span class="fu">case_when</span>(COWORK1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>                        COWORK1 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">cowork2 =</span> <span class="fu">case_when</span>(COWORK2 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>                        COWORK2 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">cowork3 =</span> <span class="fu">case_when</span>(COWORK3 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>                        COWORK3 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">cowork4 =</span> <span class="fu">case_when</span>(COWORK4 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>                        COWORK4 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">cowork5 =</span> <span class="fu">case_when</span>(COWORK5 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>                        COWORK5 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">help_find_job =</span> <span class="dv">7</span> <span class="sc">-</span> HELPJOB,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">childs =</span> CHILDS,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">sat_job =</span> <span class="dv">5</span> <span class="sc">-</span> SATJOB,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">numgiven =</span> NUMGIVEN, <span class="co"># total number of contacts</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_cowork =</span> <span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">c</span>(cowork1, cowork2, cowork3, cowork4, cowork5)), </span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>                           <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> numgiven,</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>   <span class="at">occ_major =</span> <span class="fu">as.numeric</span>(<span class="fu">substr</span>(<span class="fu">as.character</span>(OCC10), <span class="dv">1</span>, <span class="dv">1</span>)), <span class="co"># 1-9 occ code</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>   <span class="at">sub_class =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>      CLASS_ <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Lower class"</span>,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>      CLASS_ <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Working class"</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>      CLASS_ <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Middle class"</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>      CLASS_ <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Upper class"</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>   <span class="at">job_sec =</span> <span class="dv">5</span> <span class="sc">-</span> GDJOBSEC,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">race =</span> <span class="fu">factor</span>(</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>      <span class="fu">case_when</span>(</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        HISPANIC <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Latinx"</span>,</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>        RACE <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> HISPANIC <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White-NonLatinx"</span>,</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>        RACE <span class="sc">==</span> <span class="dv">2</span> <span class="sc">&amp;</span> HISPANIC <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Black-NonLatinx"</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>        RACE <span class="sc">==</span> <span class="dv">3</span> <span class="sc">&amp;</span> HISPANIC <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Other-NonLatinx"</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"White-NonLatinx"</span>, <span class="st">"Black-NonLatinx"</span>, <span class="st">"Latinx"</span>, <span class="st">"Other-NonLatinx"</span>)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="descriptive-statistics" class="level1">
+<h1>Descriptive Statistics</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BY CLASS</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data3 <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sub_class) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_prop_cowork =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">mean</span>(weighted_cowork, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># more of a working and middle class pheonomenon (in terms of self-reported class identity)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># BY 1-DIGIT OCC CODE</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>data3 <span class="sc">|&gt;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(occ_major) <span class="sc">|&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_prop_cowork =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">mean</span>(weighted_cowork, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="perceptions-of-job-loss" class="level2">
+<h2 class="anchored" data-anchor-id="perceptions-of-job-loss">Perceptions of Job Loss</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BY CLASS</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data3 <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sub_class) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_prop_cowork =</span> <span class="fu">mean</span>(joblike_lose, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># BY OCCUPATION</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>data3 <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(occ_major) <span class="sc">|&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_prop_cowork =</span> <span class="fu">mean</span>(joblike_lose, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="weight-networks-by-degree-of-contact" class="level2">
+<h2 class="anchored" data-anchor-id="weight-networks-by-degree-of-contact">Weight Networks by Degree of Contact</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Weight networks by the intensity of contact</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> data3 <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">weighted_cowork =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(numgiven) <span class="sc">&amp;&amp;</span> numgiven <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      cw <span class="ot">&lt;-</span> <span class="fu">c</span>(cowork1, cowork2, cowork3, cowork4, cowork5)[<span class="dv">1</span><span class="sc">:</span>numgiven]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      tk <span class="ot">&lt;-</span> <span class="fu">c</span>(talkto1, talkto2, talkto3, talkto4, talkto5)[<span class="dv">1</span><span class="sc">:</span>numgiven]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      num <span class="ot">&lt;-</span> <span class="fu">sum</span>(cw <span class="sc">*</span> tk, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      den <span class="ot">&lt;-</span> <span class="fu">sum</span>(tk, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (den <span class="sc">&gt;</span> <span class="dv">0</span>) num <span class="sc">/</span> den <span class="cf">else</span> <span class="cn">NA_real_</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA_real_</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+</section>
+<section id="run-regressions" class="level1">
+<h1>Run Regressions</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood of losing job</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(joblike_lose <span class="sc">~</span> weighted_cowork <span class="sc">+</span> female <span class="sc">+</span> age <span class="sc">+</span> <span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> educ <span class="sc">+</span> marital <span class="sc">+</span> CHILDS <span class="sc">+</span> hsincome <span class="sc">+</span> race <span class="sc">+</span> rural <span class="sc">+</span> union <span class="sc">+</span> region <span class="sc">+</span> work_govt <span class="sc">+</span> <span class="fu">log</span>(hrs_week) <span class="sc">+</span> migrant <span class="sc">+</span> <span class="fu">factor</span>(occ_major) <span class="sc">+</span> partyid <span class="sc">+</span> sub_class <span class="sc">+</span> sat_job, <span class="at">data =</span> data3)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract exact estimation sample used by m1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>mf_m1 <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(m1)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-run pure model on same sample</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>m1_pure <span class="ot">&lt;-</span> <span class="fu">lm</span>(joblike_lose <span class="sc">~</span> weighted_cowork, <span class="at">data =</span> mf_m1)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># perceptions of job security</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_sec <span class="sc">~</span> weighted_cowork <span class="sc">+</span> female <span class="sc">+</span> age <span class="sc">+</span> <span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> marital <span class="sc">+</span> educ <span class="sc">+</span> hsincome <span class="sc">+</span> race <span class="sc">+</span> rural <span class="sc">+</span> union <span class="sc">+</span> region <span class="sc">+</span> work_govt <span class="sc">+</span> <span class="fu">log</span>(hrs_week) <span class="sc">+</span> migrant <span class="sc">+</span> CHILDS <span class="sc">+</span> <span class="fu">factor</span>(occ_major) <span class="sc">+</span> sub_class <span class="sc">+</span> partyid <span class="sc">+</span> sat_job, <span class="at">data =</span> data3)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract exact estimation sample used by m2</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>mf_m2 <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(m2)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-run pure model on same sample</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>m2_pure <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_sec <span class="sc">~</span> weighted_cowork, <span class="at">data =</span> mf_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="robustness-checks" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-checks">Robustness Checks</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test Heteroskedasticity</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(m2) <span class="co"># not heteroskedastic</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(m1) <span class="co"># not heteroskedastic</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="final-table" class="level2">
+<h2 class="anchored" data-anchor-id="final-table">Final Table</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define models</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Job Loss (Pure)"</span> <span class="ot">=</span> m1_pure,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Job Loss (full)"</span> <span class="ot">=</span> m1,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Job Security (Pure)"</span> <span class="ot">=</span> m2_pure,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Job Security (Full)"</span> <span class="ot">=</span> m2</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># define variable names</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>coef_map <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"weighted_cowork"</span> <span class="ot">=</span> <span class="st">"Weighted coworker share"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"female"</span> <span class="ot">=</span> <span class="st">"Female"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"age"</span> <span class="ot">=</span> <span class="st">"Age"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I(age^2)"</span> <span class="ot">=</span> <span class="st">"Age squared"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"educ"</span> <span class="ot">=</span> <span class="st">"Education"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"marital"</span> <span class="ot">=</span> <span class="st">"Married"</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CHILDS"</span> <span class="ot">=</span> <span class="st">"Children"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hsincome"</span> <span class="ot">=</span> <span class="st">"Household income"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"race"</span> <span class="ot">=</span> <span class="st">"Race"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rural"</span> <span class="ot">=</span> <span class="st">"Rural"</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"union"</span> <span class="ot">=</span> <span class="st">"Union member"</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"work_govt"</span> <span class="ot">=</span> <span class="st">"Government worker"</span>,</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hrs_week"</span> <span class="ot">=</span> <span class="st">"Hours worked per week"</span>,</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"born"</span> <span class="ot">=</span> <span class="st">"US-born"</span>,</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"partyid"</span> <span class="ot">=</span> <span class="st">"Party ID"</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co"># table</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  models,</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">vcov =</span> vcovHC,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="st">"std.error"</span>,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">coef_rename =</span> coef_map,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">gof_omit =</span> <span class="st">"IC|Log|Adj|F"</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Descriptive table</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract data actually used in the model</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>mf <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(m1)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Descriptives for numeric variables</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>descriptives <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">N    =</span> <span class="fu">sapply</span>(mf, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean =</span> <span class="fu">sapply</span>(mf, <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="cf">else</span> <span class="cn">NA</span>),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">SD   =</span> <span class="fu">sapply</span>(mf, <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) <span class="fu">sd</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="cf">else</span> <span class="cn">NA</span>),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Min  =</span> <span class="fu">sapply</span>(mf, <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="cf">else</span> <span class="cn">NA</span>),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Max  =</span> <span class="fu">sapply</span>(mf, <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) <span class="fu">max</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="cf">else</span> <span class="cn">NA</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>descriptives</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
