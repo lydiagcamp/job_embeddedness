@@ -1,4 +1,4 @@
-# Occupational Embeddedness: The Effect of Strong Ties on Job Precarity
+# Strong Ties and Stable Jobs: Occupational Embeddedness in the Labor Market
 
 **Lydia Camp**  
 [`https://lydiagcamp.github.io`](https://lydiagcamp.github.io)
@@ -35,7 +35,14 @@ This repository contains the data and replication code for a paper examining the
 | `work_govt` | Government employment indicator |
 | `hrs_week` | Hours worked per week |
 | `migrant` | Migrant status |
-| `occ_major` | Occupation category (ISCO 1-digit level) |
+| `isco1` | Occupation number (ISCO 1-digit level) |
+| `isco1_title` | Occupation title  (ISCO 1-digit level) |
+| `isco2` | Occupation number (ISCO 2-digit level) |
+| `isco2_title` | Occupation title  (ISCO 2-digit level) |
+| `occ10_code` | Occupation number (OCC-10) |
+| `occ10_title` | Occupation title (OCC-10) |
 | `partyid` | Political party identification (0-7) |
 | `sub_class` | Subjective class identification |
+| `EGP` | Class position number (Erikson-Goldthorpe-Portocarero) |
+| `EGP_title` | Class position title (Erikson-Goldthorpe-Portocarero) |
 
