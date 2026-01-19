@@ -1,4 +1,4 @@
-# Occupational Embeddedness and Precarious Work
+# Occupational Embeddedness: The Effect of Strong Ties on Job Precarity
 
 **Lydia Camp**  
 [`https://lydiagcamp.github.io`](https://lydiagcamp.github.io)
