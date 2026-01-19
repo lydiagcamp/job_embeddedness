@@ -241,7 +241,7 @@ fig
 # ggsave("oe_overlap_panels.png", fig, width = 7.5, height = 10, dpi = 300)
 ```
 
-![](oe_overlap_panels.png)
+![](images/oe_overlap_panels.png)
 
 # Clean Data
 
@@ -758,7 +758,7 @@ p2
 
 ```
 
-![](coef_weighted2_cowork.png)
+![](images/coef_cowork2.png)
 
 ```{r}
 coefs <- bind_rows(
@@ -809,4 +809,4 @@ p3
 
 ```
 
-![](coef_cowork2.png)
+![](images/coef_cowork.png)
